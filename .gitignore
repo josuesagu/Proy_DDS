@@ -1,6 +1,29 @@
-#ignorar estos documentos resultantes del build. No se deben subir al repo.
-*.json
-*.fs
+# Simulation
+*.vcd
+*.fst
+*.ghw
 *.log
 *.o
-*.history
+*.out
+
+# Synthesis
+build/*
+*/build/*
+!build/Makefile
+!*/build/Makefile
+impl/
+output/
+*.fs
+*.bin
+
+# Temporary files
+*.tmp
+*.bak
+*~
+
+# VS Code local settings
+.vscode/
+
+# Operating system
+Thumbs.db
+.DS_Store
