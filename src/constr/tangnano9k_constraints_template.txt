@@ -1,6 +1,6 @@
 // To use it in a project:
 //   - rename the used ports (in each line between quotation marks, "port") according to the top level signal names in the project
-//   - change .txt to .cst. This textfile is just a guide.
+
 ////FPGA: GW1NR-LV9QN88PC6/I5
 
 

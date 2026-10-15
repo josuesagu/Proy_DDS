@@ -1,32 +1,38 @@
-#Makefile con todo el flujo de trabajo para GOWIN. Utilizando Yosys, nextpnr, iverilog, gtkwave y openFPGALoader
+#Makefile del Proyecto 2. Basado en el de los ejemplos del curso (Yosys, nextpnr, iverilog, gtkwave y openFPGALoader).
+#Cambios respecto al del curso, cada uno con su motivo:
+# 1. SOURCES: primero, en orden, los archivos del profesor (seven_seg_defs define los macros SS_x que usan
+#    disp_hex_mux e invsseg); despues todos los modulos propios con wildcard.
+# 2. synth usa "read_verilog -sv -defer": sin -defer, Yosys 0.33 falla buscando el archivo "dataFile" de rom_reg.
+# 3. test compila SOURCES antes del testbench y el testbench se elige con TB:  make test TB=display_subsystem
+# 4. Se agrega 'clean'.
 
 #FPGA a utilizar... Esto no se debe modificar para efectos del curso.
 BOARD  = tangnano9k
 FAMILY = GW1N-9C
 DEVICE = GW1NR-LV9QN88PC6/I5
 
-#Nombre del proyecto... Acá ponen el nombre que deseen.
-PROYECT = 
+#Nombre del proyecto
+PROYECT = proyecto2
 
 #Fuentes de diseno
-SOURCES := $(wildcard ../design/*.v ../design/*.sv) #Todas las fuentes .v o .sv que estan en design
-#Si quieren indicarlas una a una, pueden hacerlo como en este ejemplo:
-#SOURCES = ../design/module_top_deco_gray.v ../design/module_input_deco_gray.v 
+#Archivos del profesor, sin modificar (el orden importa: los macros primero)
+PROFE = ../design/profesor
+SOURCES_PROFE = $(PROFE)/seven_seg_defs.sv $(PROFE)/rom_reg.sv $(PROFE)/bcd_converter.sv $(PROFE)/disp_hex_mux.sv $(PROFE)/DeBounce_v.v
+#Modulos propios: todos los .sv que estan en design (no entra la subcarpeta profesor)
+SOURCES := $(SOURCES_PROFE) $(wildcard ../design/*.sv)
 
-#Fuente de simulacion
-#aca va el testbench que quieran simular
-TESTBENCH = ../sim/TB.sv
+#Simulacion: make test TB=nombre  usa ../sim/nombre_tb.sv, el modulo nombre_tb y genera nombre_tb.vcd
+TB ?= top
+TESTBENCH = ../sim/$(TB)_tb.sv
+TOP_TB    = $(TB)_tb
+VCD_FILE  = $(TB)_tb.vcd
 
 # Constraints para el proyecto
-#aca va el archivo de constraints del proyecto
-CONSTRAINTS = ../constr/CONSTRAINTS.cst
+CONSTRAINTS = ../constr/proyecto2.cst
 
-#el top se indica sin la extension .v, esto hace referencia al nombre que le pusieron al módulo y no al archivo en si.
-TOP_DESIGN = 
-TOP_TB     = 
-
-#nombre del vcd que va a generar el tb
-VCD_FILE = 
+#el top se indica sin la extension .sv, esto hace referencia al nombre del modulo y no al del archivo.
+#Mientras no exista top.sv se puede sintetizar un subsistema:  make synth TOP_DESIGN=display_subsystem
+TOP_DESIGN ?= top
 
 
 all: synth pnr bitstream load
@@ -34,33 +40,37 @@ all: synth pnr bitstream load
 # Synthesis
 synth: ${SOURCES}
 	@echo "Ejecutando la sintesis..."
-	@yosys -p "read_verilog -sv ${SOURCES}; synth_gowin -top ${TOP_DESIGN} -json ${PROYECT}.json" > synthesis_${BOARD}.log 2>&1 
-	@echo "COMPLETADO"
+	@yosys -p "read_verilog -sv -defer ${SOURCES}; synth_gowin -top ${TOP_DESIGN} -json ${PROYECT}.json" > synthesis_${BOARD}.log 2>&1 
+	@echo "COMPLETADO (revisar synthesis_${BOARD}.log)"
 
 # Place and Route
 pnr: ${PROYECT}.json
 	@echo "Ejecutando el pnr..."
 	@nextpnr-gowin --json ${PROYECT}.json --write ${PROYECT}_pnr.json --freq 27 --device ${DEVICE} --family ${FAMILY} --cst ${CONSTRAINTS} > pnr_${BOARD}.log 2>&1 
-	@echo "COMPLETADO"
+	@echo "COMPLETADO (revisar pnr_${BOARD}.log)"
 
 # Generar el Bitstream
 bitstream: ${PROYECT}_pnr.json
 	@echo "Generando ${PROYECT}_${BOARD}.fs"
 	@gowin_pack -d ${FAMILY} -o ${PROYECT}_${BOARD}.fs ${PROYECT}_pnr.json
 	@echo "COMPLETADO"
-		
+
 #Generar vcd con icarus verilog
 test: ${SOURCES} ${TESTBENCH}
-	@iverilog -o ${PROYECT}_test.o -s ${TOP_TB} -g2005-sv ${TESTBENCH} ${SOURCES}
-	@vvp ${PROYECT}_test.o 
-	
+	@iverilog -o ${TB}_test.o -s ${TOP_TB} -g2005-sv ${SOURCES} ${TESTBENCH}
+	@vvp ${TB}_test.o 
+
 #Visualizar los diagramas de tiempo con GTKWave
 wv: ${VCD_FILE}
 	gtkwave ${VCD_FILE} 
-        
+
 # Cargar el bitstream en la FPGA
 load: ${PROYECT}_${BOARD}.fs
 	openFPGALoader -b ${BOARD} ${PROYECT}_${BOARD}.fs 
 
-.PHONY: load  wv
+# Borrar lo que genera el flujo (no borra bcdtable.txt ni el Makefile)
+clean:
+	rm -f *.json *.fs *.log *.o *.vcd
+
+.PHONY: load wv clean
 .INTERMEDIATE: ${PROYECT}_pnr.json ${PROYECT}.json
