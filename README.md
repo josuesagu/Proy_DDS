@@ -1,8 +1,8 @@
 # Proyecto 2 — Calculadora de resta con teclado hexadecimal y display de 7 segmentos
 
-Curso EL-3307 Diseño Lógico, II Semestre 2026. Placa **Tang Nano 9K** (GW1NR-LV9QN88PC6/I5), reloj único de 27 MHz.
+Curso EL-3307 Diseño Lógico, II Semestre 2026. **Tang Nano 9K** (GW1NR-LV9QN88PC6/I5), reloj único de 27 MHz.
 
-**Integrantes:** (nombre A) · (nombre B)
+**Integrantes:** Ariel Elizondo · Josué Sanabria
 
 Resta dos enteros de hasta 3 dígitos digitados en un teclado hexadecimal 4×4 (Grayhill 96BB2-006-F) y muestra el resultado con signo en 4 displays de 7 segmentos de cátodo común. La Parte 5 (mediciones con analizador lógico) está descrita en `doc/mediciones/`.
 
