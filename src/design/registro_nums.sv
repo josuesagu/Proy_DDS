@@ -1,8 +1,5 @@
-//convertir los datos ingresados por el teclado a BCD
-
-//convertir los datos ingresados por el teclado a BCD
-
-module conv_BCD (
+//guarda los digitos ingreados para cada numero, un digito BCD por 4 bits
+module registro_nums (
     input  logic        clk_fpga,
     input  logic        reset_B,
     input  logic        s_aviso,

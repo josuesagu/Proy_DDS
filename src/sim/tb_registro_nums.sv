@@ -1,6 +1,6 @@
 `timescale 1ns/1ps
 
-module tb_conv_BCD();
+module tb_registro_nums();
     logic        clk;
     logic        rst_n;
     logic        s_aviso;
@@ -11,7 +11,7 @@ module tb_conv_BCD();
     logic [11:0] BCD_d1;
     logic [11:0] BCD_d2;
 
-    conv_BCD uut (
+    registro_nums uut (
         .clk_fpga(clk),
         .reset_B(rst_n),
         .s_aviso(s_aviso),
@@ -27,7 +27,7 @@ module tb_conv_BCD();
 
     initial begin
         $dumpfile("resultados_sim.vcd");
-        $dumpvars(0, tb_conv_BCD);
+        $dumpvars(0, tb_registro_nums);
 
         clk = 0;
         rst_n = 0;

@@ -15,10 +15,10 @@ module insercion_top (
     logic [3:0] cable_f_sinc;         // Conecta sincronizar_filas ➔ DeBounce del profe
     logic [3:0] cable_f_listas;       // Conecta DeBounce del profe ➔ deco_teclado
     logic       cable_TK_C;           // Conecta tk_columnas ➔ avance_columnas
-    logic       cable_s_aviso;        // Conecta deco_teclado ➔ fsm_insercion y conv_BCD
-    logic [4:0] cable_b_presionado;   // Conecta deco_teclado ➔ fsm_insercion y conv_BCD
-    logic       cable_d1;             // Conecta fsm_insercion ➔ conv_BCD
-    logic       cable_d2;             // Conecta fsm_insercion ➔ conv_BCD
+    logic       cable_s_aviso;        // Conecta deco_teclado ➔ fsm_insercion y registro_nums
+    logic [4:0] cable_b_presionado;   // Conecta deco_teclado ➔ fsm_insercion y registro_nums
+    logic       cable_d1;             // Conecta fsm_insercion ➔ registro_nums
+    logic       cable_d2;             // Conecta fsm_insercion ➔ registro_nums
 
     // -------------------------------------------------------------
     // INSTANCIACIÓN DE SUBMÓDULOS: Conectando las piezas
@@ -79,14 +79,14 @@ module insercion_top (
     );
 
     // 7. Tus Registros Caja Fuerte de Desplazamiento
-    conv_BCD bloque_memorias (
+    insercion_nums bloque_memorias (
         .clk_fpga     (clk_fpga),
         .reset_B      (reset_B),
         .s_aviso      (cable_s_aviso),
         .b_presionado (cable_b_presionado),
         .d1           (cable_d1),
         .d2           (cable_d2),
-        .R            (R),      // NUEVO: la salida R de la FSM entra a conv_BCD para limpiar los datos con la tecla B
+        .R            (R),      // NUEVO: la salida R de la FSM entra a registro_nums para limpiar los datos con la tecla B
         .BCD_d1       (BCD_d1), // Se conecta a la salida maestro para dárselo a Persona A
         .BCD_d2       (BCD_d2)  // Se conecta a la salida maestro para dárselo a Persona A
     );
