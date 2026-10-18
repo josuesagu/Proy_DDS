@@ -1,5 +1,7 @@
 //insercion de los datos
 
+//insercion de los datos
+
 module fsm_insercion (
     input  logic       clk_fpga,
     input  logic       reset_B,
@@ -45,7 +47,11 @@ module fsm_insercion (
             end
 
             state_S2: begin
-                ns = state_S2;
+                // NUEVO: segun el diagrama de estados, de S2 se vuelve a S0 al presionar B (reset de la operacion).
+                // Antes S2 no tenia salida y solo se podia salir con el boton reset de la placa.
+                if (s_aviso == 1'b1 && b_presionado == 5'd11) begin // cuando se presiona la B "reset" se vuelve a ingresar el d1
+                    ns = state_S0;
+                end
             end
             
             default: ns = state_S0; 

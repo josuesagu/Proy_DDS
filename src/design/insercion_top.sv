@@ -52,6 +52,8 @@ module insercion_top (
         .clk_fpga (clk_fpga),
         .reset_B  (reset_B),
         .TK_C     (cable_TK_C),
+        .f_sinc   (cable_f_sinc),   // NUEVO: filas sincronizadas, para congelar el barrido apenas se presiona una tecla
+        .f_listas (cable_f_listas), // NUEVO: filas filtradas, para no reanudar el barrido hasta que se confirme que se solto
         .ubic_c   (ubic_c) // Se amarra directo a las patitas físicas de salida de la FPGA
     );
 
@@ -84,6 +86,7 @@ module insercion_top (
         .b_presionado (cable_b_presionado),
         .d1           (cable_d1),
         .d2           (cable_d2),
+        .R            (R),      // NUEVO: la salida R de la FSM entra a conv_BCD para limpiar los datos con la tecla B
         .BCD_d1       (BCD_d1), // Se conecta a la salida maestro para dárselo a Persona A
         .BCD_d2       (BCD_d2)  // Se conecta a la salida maestro para dárselo a Persona A
     );

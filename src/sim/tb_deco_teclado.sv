@@ -20,6 +20,9 @@ module tb_deco_teclado();
     always #18.5 clk = ~clk;
 
     initial begin
+        $dumpfile("resultados_sim.vcd"); // NUEVO: para poder ver las formas de onda con make wv
+        $dumpvars(0, tb_deco_teclado);
+
         clk = 0;
         rst_n = 0;
         f_listas = 4'b1111; // Ninguna tecla

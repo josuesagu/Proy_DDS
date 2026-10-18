@@ -18,6 +18,9 @@ module tb_sincronizar_filas();
     always #18.5 clk = ~clk;
 
     initial begin
+        $dumpfile("resultados_sim.vcd"); // NUEVO: para poder ver las formas de onda con make wv
+        $dumpvars(0, tb_sincronizar_filas);
+
         clk = 0;
         rst_n = 0;
         f_tecl = 4'b1111; // Reposo (Líneas en alto por pull-up)
