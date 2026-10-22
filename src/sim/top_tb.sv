@@ -92,7 +92,7 @@ module top_tb;
         wait_cycles(10); resetn = 1;
         wait_cycles(10000);
 
-        type_keys("123");   check_display(3, 2, 1, 0, "ingresando dato 1 (123)");
+        type_keys("1234"); check_display(3, 2, 1, 0, "ingresando dato 1 (123)");
         type_keys("A");
         type_keys("456");   check_display(6, 5, 4, 0, "ingresando dato 2 (456)");
         type_keys("D");     check_display(3, 3, 3, 1, "123 - 456 = -333");

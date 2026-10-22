@@ -24,7 +24,7 @@ module registro_nums (
             if (limpiar == 1'b1) begin // NUEVO: B en el estado de resultado borra el dato 1
                 BCD_d1 <= 12'b0;
             end
-            else if (d1 == 1'b1 && s_aviso == 1'b1 && b_presionado < 5'd10) begin
+            else if (d1 == 1'b1 && s_aviso == 1'b1 && b_presionado < 5'd10 && BCD_d1[11:8] == 4'b0) begin // se ignora un 4.o digito
                 // desplazamiento de la posicion de los numeros a como se van ingresando
                 BCD_d1[11:8] <= BCD_d1[7:4];
                 BCD_d1[7:4]  <= BCD_d1[3:0];
@@ -44,7 +44,7 @@ module registro_nums (
             if (limpiar == 1'b1) begin // NUEVO: B en el estado de resultado borra el dato 2
                 BCD_d2 <= 12'b0;
             end
-            else if (d2 == 1'b1 && s_aviso == 1'b1 && b_presionado < 5'd10) begin
+            else if (d2 == 1'b1 && s_aviso == 1'b1 && b_presionado < 5'd10 && BCD_d2[11:8] == 4'b0) begin // se ignora un 4.o digito
                 // desplazamiento de la posicion de los numeros a como se van ingresando
                 BCD_d2[11:8] <= BCD_d2[7:4];
                 BCD_d2[7:4]  <= BCD_d2[3:0];
