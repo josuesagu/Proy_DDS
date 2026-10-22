@@ -27,11 +27,11 @@ TESTBENCH = ../sim/$(TB).sv
 TOP_TB    = $(TB)
 VCD_FILE  = $(TB).vcd
 
-# Constraints para el proyecto
-CONSTRAINTS = ../constr/proyecto2.cst
+# Constraints para el proyecto (para la prueba de displays: make all TOP_DESIGN=top_prueba_display CONSTRAINTS=../constr/prueba_display.cst)
+CONSTRAINTS ?= ../constr/proyecto2.cst
 
 #el top se indica sin la extension .sv, esto hace referencia al nombre del modulo y no al del archivo.
-#Mientras no exista top.sv se puede sintetizar un subsistema:  make synth TOP_DESIGN=display_subsystem
+#Para sintetizar otro modulo como top (por ejemplo la prueba de displays):  make synth TOP_DESIGN=top_prueba_display
 TOP_DESIGN ?= top
 
 
