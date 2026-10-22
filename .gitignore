@@ -27,3 +27,6 @@ output/
 # Operating system
 Thumbs.db
 .DS_Store
+# La tabla de la ROM del profesor se necesita para simular y sintetizar
+!build/bcdtable.txt
+!*/build/bcdtable.txt
