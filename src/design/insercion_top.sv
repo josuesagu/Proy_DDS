@@ -6,7 +6,9 @@ module insercion_top (
     output logic [3:0]  ubic_c,       // INTERFAZ FÍSICA: Pines de Columnas del teclado mecánico
     output logic [11:0] BCD_d1,       // HACIA PERSONA A: Registro BCD estable del Número 1
     output logic [11:0] BCD_d2,       // HACIA PERSONA A: Registro BCD estable del Número 2
-    output logic        R             // HACIA PERSONA A: Cable de Moore que ordena ejecutar la resta
+    output logic        R,            // HACIA PERSONA A: Cable de Moore que ordena ejecutar la resta
+    output logic        d1,           // NUEVO: 1 = se esta ingresando el dato 1 (estado S0), para elegir que se muestra
+    output logic        d2            // NUEVO: 1 = se esta ingresando el dato 2 (estado S1), para elegir que se muestra
 );
 
     // -------------------------------------------------------------
@@ -79,7 +81,7 @@ module insercion_top (
     );
 
     // 7. Tus Registros Caja Fuerte de Desplazamiento
-    insercion_nums bloque_memorias (
+    registro_nums bloque_memorias (
         .clk_fpga     (clk_fpga),
         .reset_B      (reset_B),
         .s_aviso      (cable_s_aviso),
@@ -90,5 +92,9 @@ module insercion_top (
         .BCD_d1       (BCD_d1), // Se conecta a la salida maestro para dárselo a Persona A
         .BCD_d2       (BCD_d2)  // Se conecta a la salida maestro para dárselo a Persona A
     );
+
+    // NUEVO: los estados de la FSM tambien salen del modulo
+    assign d1 = cable_d1;
+    assign d2 = cable_d2;
 
 endmodule
