@@ -3,7 +3,7 @@
 Proyecto corto 2, EL-3307 Diseño Lógico. Ejercicios 5.1, 5.2 y 5.3.
 Siga los pasos en orden. Después de cada medición, **anote en la bitácora** lo que se indica en el recuadro "Bitácora".
 
-> Los números de pin de los chips (74LS163, 74LS74, 74LS283, 74HC00) los verifiqué contra las hojas de datos o las figuras del enunciado, pero **compárelos con la hoja de datos que tengan a mano antes de energizar**. Un pin mal puesto es la falla más común y la más difícil de ver.
+> Los números de pin de los chips (74LS163, 74LS74, 74LS83, 74HC00) los verifiqué contra las hojas de datos o las figuras del enunciado, pero **compárelos con la hoja de datos que tengan a mano antes de energizar**. Un pin mal puesto es la falla más común y la más difícil de ver.
 
 ---
 
@@ -14,7 +14,7 @@ Siga los pasos en orden. Después de cada medición, **anote en la bitácora** l
 | Chip | Alimentación | Por qué |
 |---|---|---|
 | 74LS163 | **5 V** (pin 5V de la placa) | Así lo muestra la Fig. 2 del enunciado. La FPGA le da 3.3 V al reloj y el LS lo acepta como "1" (necesita ≥ 2 V). |
-| 74LS74 y 74LS283 (ejercicio 5.2) | **5 V** (el mismo riel de los 74LS163) | Lógica TTL, como el 5.1. El reloj de 3.3 V de la FPGA lo aceptan. |
+| 74LS74 y 74LS83 (ejercicio 5.2) | **5 V** (el mismo riel de los 74LS163) | Lógica TTL, como el 5.1. El reloj de 3.3 V de la FPGA lo aceptan. |
 | 74HC00 (ejercicio 5.3) | **3.3 V** (pin 3V3 de la placa) | Es seguro con 3.3 V y se lleva bien con la FPGA. |
 
 - **Ninguna salida de un chip alimentado a 5 V se conecta a un pin de la FPGA.** Las salidas de los 74LS163 van **solo** al osciloscopio.
@@ -162,120 +162,154 @@ RCO es una compuerta AND combinacional de T y las cuatro salidas. En un instante
 
 ## 2. Ejercicio 5.2 — Contadores de 4 bits: asincrónico y sincrónico (lógica TTL)
 
-**Objetivo:** construir con 74LS74 y 74LS283 un contador asincrónico y uno sincrónico, con una señal que indique que se pasó por el máximo (1111), y comparar.
+**Objetivo:** construir con 74LS74 y 74LS83 un contador asincrónico y uno sincrónico, con una señal que indique que se pasó por el máximo (1111), y comparar.
 
-> El enunciado menciona 74HC74 y 74HC283. Aquí se usan las versiones **74LS74 y 74LS283** (lógica TTL): tienen los mismos pines y la misma función; solo cambian la alimentación (5 V) y los retardos. Anótelo en la bitácora.
+> El enunciado menciona 74HC74 y 74HC283. Aquí se usan **74LS74** y un **74LS83** (sumador de 4 bits, vendido como "74LS283"): son lógica TTL, se alimentan a 5 V y tienen retardos distintos a los HC. **El 74LS83 NO tiene los mismos pines que el 74LS283** (su VCC es el pin 5 y su GND el pin 12). Use solo las tablas de esta sección. Anote en la bitácora qué chips usó realmente.
 
-### 2.1 Materiales y reglas de alimentación
+### 2.1 Materiales y alimentación
 
 | Cant. | Chip | Alimentación |
 |---|---|---|
-| 2 | 74LS74 (doble flip-flop D) = 4 flip-flops | **5 V** |
-| 1 | 74LS283 (sumador de 4 bits) | **5 V** |
+| 2 | 74LS74 (doble flip-flop D) = 4 flip-flops. Los llamamos **chip A** y **chip B** | **5 V** |
+| 1 | 74LS83 (sumador de 4 bits) | **5 V** |
 | 3 | Capacitor 100 nF (uno por chip) | entre VCC y GND de cada chip |
 
-Más jumpers y un riel de 5 V y otro de GND en la protoboard. (El 74HC283 no se usa.)
-
-- **Todo el circuito va a 5 V** (pin 5V de la placa) y GND común con la placa y el osciloscopio. Es el mismo riel que usan para el 5.1.
-- Se necesitan **4 flip-flops = 2 chips 74LS74**. Los mismos dos chips sirven para la parte A y la B: se arma el asincrónico, se mide, y se recablea al sincrónico.
-- El **único cable entre la FPGA y los chips es el reloj** (`clk_out`, pin 25, 3.3 V): un 74LS74 acepta 3.3 V como "1" (necesita ≥ 2 V). **Ninguna salida de estos chips va a la FPGA**: van solo al osciloscopio.
+- **Todo el circuito va a 5 V** (pin `5V` del header derecho de la placa, entre los pines 70 y 48) y GND común con la placa y el osciloscopio. Es el mismo riel que usan para el 5.1.
+- **El único cable entre la FPGA y los chips es el reloj** (`clk_out`, pin 25 de la FPGA, 3.3 V). Un 74LS74 acepta 3.3 V como "1" (necesita ≥ 2 V). **Ninguna salida de estos chips va a la FPGA**: van solo al osciloscopio.
 - Umbral digital del osciloscopio: **TTL (1.4 V)**.
+- Los mismos chips sirven para la parte A y la B: arme el asincrónico, mida, y recablee al sincrónico.
 
-### 2.2 Pines
+### 2.2 Pines de los chips
 
-**74LS74 (DIP-14), dos flip-flops D con preset (PRE) y clear (CLR) activos en bajo:**
+**74LS74 (DIP-14), dos flip-flops D por chip. PRE y CLR son activos en bajo.**
 
 | Pin | Señal | Pin | Señal |
 |---|---|---|---|
-| 1 | 1CLR | 8 | 2Q̄ |
-| 2 | 1D | 9 | 2Q |
-| 3 | 1CLK | 10 | 2PRE |
-| 4 | 1PRE | 11 | 2CLK |
-| 5 | 1Q | 12 | 2D |
-| 6 | 1Q̄ | 13 | 2CLR |
+| 1 | CLR del 1.er FF | 8 | Q̄ del 2.º FF |
+| 2 | D del 1.er FF | 9 | Q del 2.º FF |
+| 3 | CLK del 1.er FF | 10 | PRE del 2.º FF |
+| 4 | PRE del 1.er FF | 11 | CLK del 2.º FF |
+| 5 | Q del 1.er FF | 12 | D del 2.º FF |
+| 6 | Q̄ del 1.er FF | 13 | CLR del 2.º FF |
 | 7 | GND | 14 | VCC |
 
-**74LS283 (DIP-16), sumador de 4 bits:**
+Los cuatro flip-flops: **FF0** = 1.º del chip A (bit 0, LSB), **FF1** = 2.º del chip A, **FF2** = 1.º del chip B, **FF3** = 2.º del chip B (MSB). Sus salidas Q son **Q0, Q1, Q2, Q3**:
+
+| Salida | Pin |
+|---|---|
+| Q0 | chip A, pin 5 |
+| Q1 | chip A, pin 9 |
+| Q2 | chip B, pin 5 |
+| Q3 | chip B, pin 9 |
+
+**74LS83 (DIP-16), sumador de 4 bits (A + B + C0):**
 
 | Pin | Señal | Pin | Señal |
 |---|---|---|---|
-| 1 | S2 | 9 | **C4** (acarreo de salida) |
-| 2 | B2 | 10 | S4 |
-| 3 | A2 | 11 | B4 |
-| 4 | S1 | 12 | A4 |
-| 5 | A1 | 13 | S3 |
-| 6 | B1 | 14 | A3 |
-| 7 | **C0** (acarreo de entrada) | 15 | B3 |
-| 8 | GND | 16 | VCC |
+| 1 | A4 | 9 | S1 |
+| 2 | S3 | 10 | A1 |
+| 3 | A3 | 11 | B1 |
+| 4 | B3 | 12 | **GND** |
+| 5 | **VCC (5 V)** | 13 | C0 (acarreo de entrada) |
+| 6 | S2 | 14 | **C4 (acarreo de salida)** |
+| 7 | B2 | 15 | S4 |
+| 8 | A2 | 16 | B4 |
 
-Nombres de los cuatro flip-flops: **FF0** = 1.º del chip A (LSB), **FF1** = 2.º del chip A, **FF2** = 1.º del chip B, **FF3** = 2.º del chip B (MSB). Q0 a Q3 son sus salidas Q.
+Fuente: [microcontrollerslab.com](https://microcontrollerslab.com/74ls83-4-bit-full-adder-pinout-examples-applications-datasheet/). **Compárelo con la hoja de datos de su chip antes de energizar.** Si el chip tiene impreso 283, use la tabla del 74LS283 de la hoja de datos, no esta.
 
-| FF | Pines (CLK, D, Q, Q̄) |
+### 2.3 Conexiones comunes (partes A y B)
+
+**Alimentación y entradas inactivas — chip A y chip B (idéntico en los dos):**
+
+| Pin | Va a |
 |---|---|
-| FF0 (chip A, 1.º) | CLK 3, D 2, Q 5, Q̄ 6 |
-| FF1 (chip A, 2.º) | CLK 11, D 12, Q 9, Q̄ 8 |
-| FF2 (chip B, 1.º) | CLK 3, D 2, Q 5, Q̄ 6 |
-| FF3 (chip B, 2.º) | CLK 11, D 12, Q 9, Q̄ 8 |
+| 14 | **5 V** |
+| 7 | **GND** (y 100 nF entre el 14 y el 7, lo más cerca posible) |
+| 1, 4, 10, 13 | **5 V** (CLR y PRE inactivos; si quedan flotando el flip-flop puede quedar "pegado") |
 
-**Alimentación de cada chip:** pin 14 de cada 74LS74 a **5 V** y pin 7 a **GND**; pin 16 del 74LS283 a **5 V** y pin 8 a **GND**; un 100 nF por chip entre su VCC y su GND.
+**Alimentación del 74LS83:**
 
-En **todos** los flip-flops: PRE (pines 4 y 10) y CLR (pines 1 y 13) a **5 V** (inactivos). Para reiniciar a 0000 al inicio, toque un instante con un jumper los CLR de los cuatro a GND y suéltelos (opcional: el contador cuenta bien aunque arranque en cualquier valor).
+| Pin | Va a |
+|---|---|
+| 5 | **5 V** (y 100 nF entre el 5 y el 12) |
+| 12 | **GND** |
 
-### 2.3 Parte A: contador asincrónico (rizado)
+**Sumador como "Q + 1" (igual en A y B):**
+
+| Pin del 74LS83 | Va a |
+|---|---|
+| 10 (A1) | Q0 = chip A, pin 5 |
+| 8 (A2) | Q1 = chip A, pin 9 |
+| 3 (A3) | Q2 = chip B, pin 5 |
+| 1 (A4) | Q3 = chip B, pin 9 |
+| 11 (B1) | **5 V** (suma 1) |
+| 7 (B2), 4 (B3), **16 (B4)** | **GND** |
+| 13 (C0) | **GND** |
+| 14 (C4) | **MAX** (al osciloscopio, D4). Vale 1 solo cuando Q = 1111 |
+
+Los pines **9, 6, 2 y 15** (S1 a S4, las salidas de suma) **no se conectan en la parte A**. En la parte B sí se usan, **incluido el 15**.
+
+Opcional: para empezar en 0000, toque un instante con un jumper los pines 1 y 13 de **ambos** chips a GND y suéltelos. El contador cuenta bien aunque arranque en cualquier valor.
+
+### 2.4 Parte A: contador asincrónico (rizado)
 
 Idea: cada flip-flop **conmuta** (D = Q̄) y el reloj del siguiente es la salida **Q̄** del anterior.
 
-| Conexión | A |
-|---|---|
-| FF0 CLK (pin 3, chip A) | FPGA pin 25 (`clk_out`) |
-| FF0 D (pin 2) | FF0 Q̄ (pin 6) |
-| FF1 CLK (pin 11) | FF0 Q̄ (pin 6) |
-| FF1 D (pin 12) | FF1 Q̄ (pin 8) |
-| FF2 CLK (pin 3, chip B) | FF1 Q̄ (pin 8, chip A) |
-| FF2 D (pin 2, chip B) | FF2 Q̄ (pin 6, chip B) |
-| FF3 CLK (pin 11, chip B) | FF2 Q̄ (pin 6, chip B) |
-| FF3 D (pin 12, chip B) | FF3 Q̄ (pin 8, chip B) |
+| Chip | Pin | Va a |
+|---|---|---|
+| A | 3 (CLK de FF0) | **FPGA pin 25** (`clk_out`) |
+| A | 2 (D de FF0) | pin 6 del mismo chip (Q̄ de FF0) |
+| A | 11 (CLK de FF1) | pin 6 del mismo chip |
+| A | 12 (D de FF1) | pin 8 del mismo chip (Q̄ de FF1) |
+| B | 3 (CLK de FF2) | **chip A, pin 8** |
+| B | 2 (D de FF2) | pin 6 del mismo chip |
+| B | 11 (CLK de FF3) | pin 6 del mismo chip |
+| B | 12 (D de FF3) | pin 8 del mismo chip |
 
-(Si en vez de Q̄ usara Q para el reloj del siguiente, el contador contaría hacia atrás. Con Q̄ cuenta hacia arriba.)
+(Si usara Q en vez de Q̄ para el reloj del siguiente, el contador contaría hacia atrás. Con Q̄ cuenta hacia arriba.)
 
-**Señal de máximo (MAX) con el 74LS283:** el sumador calcula Q + 1. Su acarreo de salida C4 vale 1 solo cuando Q = 1111, o sea justo cuando se pasa por el máximo.
+Más lo de la sección 2.3 (alimentación, entradas inactivas y sumador).
 
-| Conexión del 74LS283 | A |
-|---|---|
-| A1, A2, A3, A4 (pines 5, 3, 14, 12) | Q0, Q1, Q2, Q3 |
-| B1 (pin 6) | **5 V** |
-| B2, B3, B4 (pines 2, 15, 11) | GND |
-| C0 (pin 7) | GND |
-| VCC (16) / GND (8) | 5 V / GND, con 100 nF |
-| C4 (pin 9) | **MAX** (a medir) |
-| S1 a S4 (pines 4, 1, 13, 10) | sin conectar en esta parte |
+**Qué conectar al osciloscopio en la parte A:**
 
-**Osciloscopio:** D0 a D3 = Q0 a Q3, D4 = MAX (C4), D5 = CLK. Analógico 1 = CLK, analógico 2 = Q3 (para ver los retardos). Disparo: `Edge`, **D3 subida**. Umbral **TTL (1.4 V)**.
+| Qué | A dónde | Cómo |
+|---|---|---|
+| **Canales digitales** (pod D0 a D7) | D0 ← Q0 (chip A pin 5), D1 ← Q1 (chip A pin 9), D2 ← Q2 (chip B pin 5), D3 ← Q3 (chip B pin 9), D4 ← MAX (74LS83 pin 14), D5 ← CLK (chip A pin 3). **El cable de tierra del pod, a GND del circuito.** | Siempre. Con estos ya se ve toda la cuenta. |
+| **Analógico 1** | CLK (chip A pin 3) | Solo para la medición de retardos (paso 3). **Aquí use la punta GTP-200B-4** (ver 2.6). |
+| **Analógico 2** | Q3 (chip B pin 9) | Solo para la medición de retardos y para ver niveles reales. BNC regular o la segunda punta. |
+
+Disparo: `Edge`, fuente **D3**, flanco de subida. Umbral digital **TTL (1.4 V)**.
 
 **Qué debe ver:**
-1. 1 µs/div: la cuenta 0 a 15, repetida cada ≈ 8.7 µs.
-2. MAX en alto durante el estado 1111.
-3. Acérquese a la transición 0111 → 1000 (50 ns/div, o el zoom del osciloscopio): los bits **no cambian a la vez**. Q0 cambia primero, luego Q1, Q2 y por último Q3, cada uno con el retardo del anterior (los 74LS74 tardan decenas de ns por etapa, así que el retardo total hasta Q3 se nota bien). Entre medio aparecen estados intermedios incorrectos (por ejemplo 0111 → 0110 → 0100 → 0000 → 1000).
-4. Esos estados intermedios pueden producir pulsos cortos en MAX (C4).
+1. **Solo con los canales digitales**, a 2 µs/div: la cuenta 0 a 15 repetida cada ≈ 8.7 µs. D0 con unos 9 pulsos en 10 µs, D1 con 4–5, D2 con 2, D3 con 1. MAX (D4) en alto durante el estado 1111.
+2. **Con zoom** (50 ns/div o el zoom del osciloscopio) en la transición 0111 → 1000: los bits **no cambian a la vez**. Q0 cambia primero, luego Q1, Q2 y por último Q3. Entre medio aparecen estados incorrectos (por ejemplo 0111 → 0110 → 0100 → 0000 → 1000).
+3. **Aquí sí se usan los canales analógicos** (1 = CLK, 2 = Q3): mida el retardo entre el flanco de CLK y el cambio de Q3 con los cursores. Es el retardo acumulado de las cuatro etapas.
+4. Esos estados intermedios pueden producir pulsos cortos en MAX (C4). Mírelos en D4 y, si hace falta, en un canal analógico.
 
 **Bitácora:** captura de la cuenta completa, captura con zoom de la transición 0111 → 1000 (con los estados intermedios), retardo total medido entre CLK y Q3.
 
-### 2.4 Parte B: contador sincrónico
+### 2.5 Parte B: contador sincrónico
 
-Idea: **todos** los flip-flops comparten el reloj; el sumador calcula el siguiente valor (Q + 1) y lo entrega a las entradas D. **Modifique el circuito de la parte A** (puede dejarlo armado y cambiar solo estos cables):
+Idea: **todos** los flip-flops comparten el reloj; el sumador calcula el siguiente valor (Q + 1) y lo entrega a las entradas D. **Modifique el circuito de la parte A**: quite estos cables y ponga estos otros.
 
-| Cambio | B |
-|---|---|
-| CLK de FF0, FF1, FF2 y FF3 | todos a FPGA pin 25 (`clk_out`) |
-| D de FF0 (pin 2, chip A) | S1 (pin 4 del 74LS283) |
-| D de FF1 (pin 12, chip A) | S2 (pin 1) |
-| D de FF2 (pin 2, chip B) | S3 (pin 13) |
-| D de FF3 (pin 12, chip B) | S4 (pin 10) |
-| Sumador | igual que en A (A = Q, B = 0001, C0 = GND); C4 = MAX |
+**Quite** (de la parte A): chip A pines 2–6, 11–6 y 12–8; chip B pines 3–(chip A pin 8), 2–6, 11–6 y 12–8.
 
-Quite las conexiones D = Q̄ y las de reloj por Q̄ de la parte A.
+**Ponga:**
 
-**Osciloscopio:** igual que en A (D0 a D3 = Q0 a Q3, D4 = MAX, D5 = CLK, disparo D3 subida, umbral TTL).
+| Chip | Pin | Va a |
+|---|---|---|
+| A | 3 (CLK de FF0) | FPGA pin 25 (ya estaba) |
+| A | 11 (CLK de FF1) | **FPGA pin 25** |
+| B | 3 (CLK de FF2) | **FPGA pin 25** |
+| B | 11 (CLK de FF3) | **FPGA pin 25** |
+| A | 2 (D de FF0) | **74LS83 pin 9** (S1) |
+| A | 12 (D de FF1) | **74LS83 pin 6** (S2) |
+| B | 2 (D de FF2) | **74LS83 pin 2** (S3) |
+| B | 12 (D de FF3) | **74LS83 pin 15** (S4) |
+
+El sumador, la alimentación y las entradas inactivas quedan igual que en la parte A (sección 2.3). El pin 14 sigue dando MAX.
+
+**Osciloscopio:** igual que en A (D0 a D3 = Q0 a Q3, D4 = MAX, D5 = CLK, disparo D3 subida, umbral TTL). Analógico 1 = CLK (con la punta), analógico 2 = Q3, solo para medir el retardo.
 
 **Qué debe ver:**
 1. La misma cuenta 0 a 15.
@@ -284,7 +318,21 @@ Quite las conexiones D = Q̄ y las de reloj por Q̄ de la parte A.
 
 **Bitácora:** captura de la cuenta, captura con zoom de la transición 0111 → 1000 para comparar con la parte A, retardos medidos.
 
-### 2.5 Preguntas del enunciado
+### 2.6 Cuándo usar la punta GTP-200B-4 y cuándo el BNC
+
+| Situación | Qué usar |
+|---|---|
+| Canales **digitales** (D0 a D7) | **Ni punta ni BNC.** Usan el pod con sus cables y su cable de tierra. |
+| Analógico para el **reloj** o una señal rápida donde importa la forma del flanco | **La punta, con el interruptor en 10X.** Punta a la señal, lagarto a **GND del circuito**. En el osciloscopio, `[1]` → `Probe` → **10:1**. |
+| Analógico para una señal lenta o solo para ver niveles | BNC regular: cable rojo a la señal, negro a GND. `Probe` → **1:1** (si lo deja en 10:1 verá 10 veces más voltaje, como en la foto del reloj: 32 V). |
+
+- **Compense la punta una vez:** conéctela al terminal `Demo`/`Probe Comp` del osciloscopio (cuadrada de ~1 kHz) y gire el tornillito de la punta hasta que la cuadrada tenga esquinas rectas, sin picos ni redondeo.
+- Hay que ajustar `Probe` en **cada canal** según lo que se le conectó.
+- Los dos lagartos de tierra y el cable del pod van al **mismo** riel de GND.
+- Si solo tiene una punta, úsela en el reloj (analógico 1) y el BNC en Q3.
+- Apague el canal analógico que no esté conectado (botón `[1]` o `[2]`): un canal sin conectar capta ruido y estorba.
+
+### 2.7 Preguntas del enunciado
 
 **a) ¿Diferencias en las salidas de ambas estructuras?**
 Compare con sus capturas:
@@ -400,6 +448,6 @@ Con un inversor entre S y R (S = D, R = D̄): ya no existe la combinación prohi
 | El contador cuenta con saltos raros | Falta un 100 nF cerca del chip; pines de entrada flotando; mala tierra del osciloscopio |
 | El contador 2 no cambia | Pin 10 del contador 2 conectado al pin 15 del contador 1 |
 | El osciloscopio no dispara estable | Umbral digital mal puesto (circuitos a 5 V: TTL 1.4 V; 5.3 a 3.3 V: usuario 1.65 V); disparo en el MSB |
-| Contador 5.2 raro o que no cambia | Todo a 5 V (74LS74 y 74LS283); PRE y CLR de los 74LS74 a 5 V; B1 del 283 a 5 V; umbral TTL |
+| Contador 5.2 raro o que no cambia | Todo a 5 V (74LS74 y 74LS83); VCC del 74LS83 en el pin 5 y GND en el 12; PRE y CLR de los 74LS74 a 5 V; B1 (pin 11) del 74LS83 a 5 V y B4 (pin 16) a GND; umbral TTL |
 | Circuito 74HC00 (5.3) "raro" | Recuerde alimentarlo a 3.3 V, no a 5 V |
 | Chip se calienta | Apague. VCC y GND invertidos o cortocircuito |
