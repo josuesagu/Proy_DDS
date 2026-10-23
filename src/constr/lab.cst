@@ -1,0 +1,15 @@
+// Constraints de los ejercicios de laboratorio (para top_lab)
+// Puertos: clk, resetn, clk_out
+// Uso: make all TOP_DESIGN=top_lab CONSTRAINTS=../constr/lab.cst
+
+//Clock (27 MHz)
+IO_LOC  "clk" 52;
+IO_PORT "clk" IO_TYPE=LVCMOS33 PULL_MODE=UP;
+
+//Reset: boton btn2 (activo en bajo)
+IO_LOC  "resetn" 4;
+IO_PORT "resetn" IO_TYPE=LVCMOS18;
+
+//Salida del reloj de 1.8432 MHz: pin 25 del header izquierdo (3.3 V)
+IO_LOC  "clk_out" 25;
+IO_PORT "clk_out" DRIVE=8 IO_TYPE=LVCMOS33;
