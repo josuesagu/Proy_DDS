@@ -1,0 +1,75 @@
+// BORRADOR de constraints del Proyecto 2 (FPGA: GW1NR-LV9QN88PC6/I5, Tang Nano 9K)
+// Los nombres entre comillas deben ser IGUALES a los puertos de "top" (src/design/top.sv):
+//   clk, resetn, row[3:0], col[3:0], seg[6:0], sel[3:0]
+// Pines tomados del mapa de pines de la placa (todo el header izquierdo es de 3.3 V).
+// PENDIENTE: verificar en la placa fisica que estos pines salen al header y estan libres.
+// Los pines 33-35, 40-42, 51-57 van al conector del LCD RGB y el 36 al lector de tarjeta:
+// no estorban mientras no se conecte nada ahi.
+
+//Clock (27 MHz)
+IO_LOC  "clk" 52;
+IO_PORT "clk" IO_TYPE=LVCMOS33 PULL_MODE=UP;
+
+//Reset: boton btn2 (activo en bajo). El boton esta en el banco de 1.8 V, como en el template del curso.
+IO_LOC  "resetn" 4;
+IO_PORT "resetn" IO_TYPE=LVCMOS18;
+
+//Teclado: columnas (salidas del barrido). Ir con resistencia de 330 ohm en serie.
+IO_LOC  "col[0]" 25;
+IO_PORT "col[0]" DRIVE=8 IO_TYPE=LVCMOS33;
+IO_LOC  "col[1]" 30;   // antes 26 (cambiado por el equipo)
+IO_PORT "col[1]" DRIVE=8 IO_TYPE=LVCMOS33;
+IO_LOC  "col[2]" 27;
+IO_PORT "col[2]" DRIVE=8 IO_TYPE=LVCMOS33;
+IO_LOC  "col[3]" 28;
+IO_PORT "col[3]" DRIVE=8 IO_TYPE=LVCMOS33;
+
+//Teclado: filas (entradas con pull-up interno; tecla presionada = 0)
+IO_LOC  "row[0]" 29;
+IO_PORT "row[0]" IO_TYPE=LVCMOS33 PULL_MODE=UP;
+IO_LOC  "row[1]" 37;   // el 30 ahora lo usa col[1]; CONFIRMAR con la placa
+IO_PORT "row[1]" IO_TYPE=LVCMOS33 PULL_MODE=UP;
+IO_LOC  "row[2]" 33;
+IO_PORT "row[2]" IO_TYPE=LVCMOS33 PULL_MODE=UP;
+IO_LOC  "row[3]" 34;
+IO_PORT "row[3]" IO_TYPE=LVCMOS33 PULL_MODE=UP;
+
+//Displays: segmentos, seg[6] = a ... seg[0] = g (catodo comun: 1 = encendido). Resistencia de 220 ohm en cada uno.
+IO_LOC  "seg[6]" 35;
+IO_PORT "seg[6]" DRIVE=8 IO_TYPE=LVCMOS33;
+IO_LOC  "seg[5]" 40;
+IO_PORT "seg[5]" DRIVE=8 IO_TYPE=LVCMOS33;
+IO_LOC  "seg[4]" 41;
+IO_PORT "seg[4]" DRIVE=8 IO_TYPE=LVCMOS33;
+IO_LOC  "seg[3]" 42;
+IO_PORT "seg[3]" DRIVE=8 IO_TYPE=LVCMOS33;
+IO_LOC  "seg[2]" 51;
+IO_PORT "seg[2]" DRIVE=8 IO_TYPE=LVCMOS33;
+IO_LOC  "seg[1]" 53;
+IO_PORT "seg[1]" DRIVE=8 IO_TYPE=LVCMOS33;
+IO_LOC  "seg[0]" 54;
+IO_PORT "seg[0]" DRIVE=8 IO_TYPE=LVCMOS33;
+
+//Displays: seleccion de digito, sel[0] = unidades ... sel[3] = signo (activo en alto: base del NPN, 470 ohm)
+IO_LOC  "sel[0]" 55;
+IO_PORT "sel[0]" DRIVE=8 IO_TYPE=LVCMOS33;
+IO_LOC  "sel[1]" 56;
+IO_PORT "sel[1]" DRIVE=8 IO_TYPE=LVCMOS33;
+IO_LOC  "sel[2]" 57;
+IO_PORT "sel[2]" DRIVE=8 IO_TYPE=LVCMOS33;
+IO_LOC  "sel[3]" 36;
+IO_PORT "sel[3]" DRIVE=8 IO_TYPE=LVCMOS33;
+
+// LED internos de la Tang Nano 9K (activos en bajo, banco de 1.8 V)
+IO_LOC  "led[0]" 10;
+IO_PORT "led[0]" PULL_MODE=UP DRIVE=8 IO_TYPE=LVCMOS18;
+IO_LOC  "led[1]" 11;
+IO_PORT "led[1]" PULL_MODE=UP DRIVE=8 IO_TYPE=LVCMOS18;
+IO_LOC  "led[2]" 13;
+IO_PORT "led[2]" PULL_MODE=UP DRIVE=8 IO_TYPE=LVCMOS18;
+IO_LOC  "led[3]" 14;
+IO_PORT "led[3]" PULL_MODE=UP DRIVE=8 IO_TYPE=LVCMOS18;
+IO_LOC  "led[4]" 15;
+IO_PORT "led[4]" PULL_MODE=UP DRIVE=8 IO_TYPE=LVCMOS18;
+IO_LOC  "led[5]" 16;
+IO_PORT "led[5]" PULL_MODE=UP DRIVE=8 IO_TYPE=LVCMOS18;
