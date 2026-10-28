@@ -21,7 +21,7 @@ module tk_columnas (
             cuenta_int <= 15'b0;
         end
         else begin
-            if (cuenta_int == 15'd26999) begin // CORREGIDO: antes 27000. Contando de 0 a 26999 son exactamente 27000 ciclos = 1 ms
+            if (cuenta_int == 15'd26999) begin // contando de 0 a 26999 son exactamente 27000 ciclos = 1 ms
                 cuenta_int <= 15'b0; // para reiniciar la cuenta del reloj interno
             end
             else begin

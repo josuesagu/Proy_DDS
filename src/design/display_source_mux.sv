@@ -1,5 +1,4 @@
 // Elige qué número se muestra en los displays, según el estado de la FSM de inserción
-// Autor: (nombre)
 //
 //   d1 = 1 : se está ingresando el dato 1  -> se muestra a
 //   d2 = 1 : se está ingresando el dato 2  -> se muestra b

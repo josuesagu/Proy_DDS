@@ -15,8 +15,8 @@ module sincronizar_filas (
     
     always_ff @(posedge clk_fpga or negedge reset_B) begin
         if (reset_B == 1'b0) begin
-            f_etapa1 <= 4'b1111; // CORREGIDO: antes era 4'b0000. Las filas son activas en bajo, el reposo (sin tecla) es 1111
-            f_sinc   <= 4'b1111; // CORREGIDO: con 0000 el reset parecia "todas las teclas presionadas"
+            f_etapa1 <= 4'b1111; //las filas son activas en bajo, el reposo (sin tecla) es 1111
+            f_sinc   <= 4'b1111; 
 
         end
         else begin

@@ -1,6 +1,6 @@
 `timescale 1ns/1ps
 
-// Prueba del antirrebote del profesor (DeBounce_v.v, no se modifica).
+// Prueba del antirrebote del profe (DeBounce_v.v, no se modifica).
 // Se usa N = 6: la ventana es 2^(N-1) = 32 ciclos (en la placa se usará N = 20 o 21).
 module debounce_tb;
 

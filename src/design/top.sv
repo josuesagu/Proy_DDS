@@ -1,6 +1,4 @@
 // Top del Proyecto 2: calculadora de resta con teclado hexadecimal y displays de 7 segmentos
-// Autor: (nombre)
-//
 // Puertos físicos (los nombres deben coincidir con src/constr/proyecto2.cst):
 //   clk    reloj de 27 MHz
 //   resetn botón btn2, activo en bajo
@@ -25,7 +23,7 @@ module top (
     logic [9:0]  value;            // número que se muestra
     logic        neg;              // 1 = mostrar signo menos
 
-    // Teclado y registros de inserción (DeBounce del profesor adentro)
+    // Teclado y registros de inserción (DeBounce del profe dentro)
     insercion_top teclado (
         .clk_fpga (clk),
         .reset_B  (resetn),
@@ -71,7 +69,7 @@ module top (
         .clk   (clk),
         .reset (~resetn),
         .value (value),
-        .neg   (neg),
+        .neg   (neg), //cambiar esto, antes era d2 voy a poner neg
         .seg   (seg),
         .sel   (sel)
     );

@@ -1,6 +1,4 @@
 // Top de los ejercicios de laboratorio (Parte 5): genera el reloj de 1.8432 MHz
-// Autor: (nombre)
-//
 // Un contador de 32 bits suma INC en cada ciclo de 27 MHz. El bit más significativo
 // (acc[31]) cambia a una frecuencia de INC * 27 MHz / 2^32 = 1.8432 MHz.
 //   INC = 1.8432 MHz * 2^32 / 27 MHz = 293 203 101 (redondeado)

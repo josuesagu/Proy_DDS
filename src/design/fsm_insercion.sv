@@ -13,9 +13,12 @@ module fsm_insercion (
 );
 
     // estados de la maquina de estados
-    localparam state_S0 = 2'b00; // se esta ingresando el dato 1
-    localparam state_S1 = 2'b01; // se esta ingresando el dato 2
-    localparam state_S2 = 2'b10; // se esta calculando el resultado
+    localparam [1:0] state_S0 = 2'b00;
+    localparam [1:0] state_S1 = 2'b01;
+    localparam [1:0] state_S2 = 2'b10;
+
+    (* fsm_encoding = "none" *) logic [1:0] cs;
+    logic [1:0] ns;
 
     // flip flops
     logic [1:0] cs; // S1 S0
@@ -41,13 +44,16 @@ module fsm_insercion (
             end
 
             state_S1: begin
-                if (s_aviso == 1'b1 && b_presionado == 5'd13) begin // cuando se presiona la D "igual" se pasa de ingresar el d2 a calcular
+                if (s_aviso == 1'b1 && b_presionado == 5'd13) begin // D "igual"
                     ns = state_S2;
+                end
+                else if (s_aviso == 1'b1 && b_presionado == 5'd11) begin // B "reset" desde el dato 2
+                    ns = state_S0;
                 end
             end
 
             state_S2: begin
-                // NUEVO: segun el diagrama de estados, de S2 se vuelve a S0 al presionar B (reset de la operacion).
+                // segun el diagrama de estados, de S2 se vuelve a S0 al presionar B (reset de la operacion).
                 // Antes S2 no tenia salida y solo se podia salir con el boton reset de la placa.
                 if (s_aviso == 1'b1 && b_presionado == 5'd11) begin // cuando se presiona la B "reset" se vuelve a ingresar el d1
                     ns = state_S0;

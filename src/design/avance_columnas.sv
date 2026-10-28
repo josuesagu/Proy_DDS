@@ -6,13 +6,13 @@ module avance_columnas (
     input  logic       clk_fpga,
     input  logic       reset_B,
     input  logic       TK_C, 
-    // NUEVO: filas del teclado, para saber si hay una tecla presionada
-    input  logic [3:0] f_sinc,   // NUEVO: filas sincronizadas (sin filtrar): detectan la tecla apenas se presiona
-    input  logic [3:0] f_listas, // NUEVO: filas ya filtradas por el DeBounce: confirman que la tecla sigue presionada
+    //filas del teclado, para saber si hay una tecla presionada
+    input  logic [3:0] f_sinc,   //filas sincronizadas (sin filtrar): detectan la tecla apenas se presiona
+    input  logic [3:0] f_listas, //filas ya filtradas por el DeBounce: confirman que la tecla sigue presionada
     output logic [3:0] ubic_c // ubicacion de la columna activa, 4 flip flops
 );
 
-    // NUEVO: sin_tecla = 1 cuando las 4 filas estan en 1 (las filas son activas en bajo, 1 = nada presionado).
+    // sin_tecla = 1 cuando las 4 filas estan en 1 (las filas son activas en bajo, 1 = nada presionado).
     // Se revisan las dos senales: f_sinc para frenar de inmediato al presionar, y f_listas para no
     // reanudar el barrido hasta que el DeBounce confirme que la tecla ya se solto.
     logic sin_tecla;
@@ -23,7 +23,7 @@ module avance_columnas (
             ubic_c <= 4'b1110; // primer columna
         end
         else begin
-            // NUEVO: ademas de TK_C, solo avanza si no hay tecla presionada.
+            // ademas de TK_C, solo avanza si no hay tecla presionada.
             // Por que: el DeBounce necesita ver la fila estable ~39 ms. Si la columna sigue rotando cada 1 ms,
             // la fila de la tecla baja solo 1 ms de cada 4, el DeBounce nunca la confirma y el teclado no responde.
             // Congelando la columna, la fila queda fija en 0 y el DeBounce la puede confirmar.

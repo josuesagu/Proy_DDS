@@ -1,6 +1,4 @@
 // Top de PRUEBA para el montaje: solo displays, sin teclado
-// Autor: (nombre)
-//
 // Sirve para comprobar el cableado de los displays antes de conectar el teclado.
 // Muestra, cambiando cada ~1.2 s, estos valores:
 //   888  (todos los segmentos encendidos)

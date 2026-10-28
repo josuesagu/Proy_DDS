@@ -1,6 +1,4 @@
 // Resta A - B con signo, usando complemento a 2 y solo el operador +
-// Autor: (nombre)
-//
 // A y B son enteros de 0 a 999 (10 bits). Se trabaja con 11 bits para tener el bit de signo:
 //   diff = A + (~B + 1)      el resultado va de -999 a +999
 //   si diff[10] = 1 el resultado es negativo y la magnitud es ~diff + 1

@@ -1,12 +1,10 @@
 // Subsistema de despliegue: número de 0 a 999 con signo en 4 displays de cátodo común
-// Autor: (nombre)
-//
 // Usa, sin modificar, los módulos del profesor:
 //   bcd_converter (OBL-3): binario -> BCD
 //   disp_hex_mux  (OBL-2): multiplexado de 4 dígitos y decodificación a 7 segmentos
 //
 // El disp_hex_mux del profesor entrega las señales activas en BAJO (an y sseg).
-// Con displays de cátodo común hace falta activo en ALTO, así que aquí se invierten.
+// Con displays de  catodo común hace falta activo en ALTO, así que aquí se invierten.
 // Además disp_hex_mux solo muestra dígitos 0-F, así que el signo menos del dígito
 // de la izquierda se pone aquí (solo segmento g) o se apaga ese dígito.
 //

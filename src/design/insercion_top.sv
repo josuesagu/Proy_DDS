@@ -1,19 +1,16 @@
 
 module insercion_top (
-    input  logic        clk_fpga,     // Reloj Maestro de la TangNano (Pin 52 - 27 MHz)
-    input  logic        reset_B,      // Reset Global (Botón físico B de la placa)
-    input  logic [3:0]  f_tecl,       // INTERFAZ FÍSICA: Pines de Filas del teclado mecánico
-    output logic [3:0]  ubic_c,       // INTERFAZ FÍSICA: Pines de Columnas del teclado mecánico
-    output logic [11:0] BCD_d1,       // HACIA PERSONA A: Registro BCD estable del Número 1
-    output logic [11:0] BCD_d2,       // HACIA PERSONA A: Registro BCD estable del Número 2
-    output logic        R,            // HACIA PERSONA A: Cable de Moore que ordena ejecutar la resta
-    output logic        d1,           // NUEVO: 1 = se esta ingresando el dato 1 (estado S0), para elegir que se muestra
-    output logic        d2            // NUEVO: 1 = se esta ingresando el dato 2 (estado S1), para elegir que se muestra
+    input  logic        clk_fpga,     // (Pin 52 - 27 MHz)
+    input  logic        reset_B,      // Reset Global (Botón físico B)
+    input  logic [3:0]  f_tecl,       // Pines de Filas del teclado
+    output logic [3:0]  ubic_c,       // Pines de Columnas del teclado 
+    output logic [11:0] BCD_d1,       // Registro BCD estable del Número 1
+    output logic [11:0] BCD_d2,       // Registro BCD estable del Número 2
+    output logic        R,            // Cable de Moore que ordena ejecutar la resta
+    output logic        d1,           // se esta ingresando el dato 1 (estado S0), para elegir que se muestra
+    output logic        d2            // se esta ingresando el dato 2 (estado S1), para elegir que se muestra
 );
 
-    // -------------------------------------------------------------
-    // INTERCONEXIONES INTERNAS (Los cables virtuales del chasis)
-    // -------------------------------------------------------------
     logic [3:0] cable_f_sinc;         // Conecta sincronizar_filas ➔ DeBounce del profe
     logic [3:0] cable_f_listas;       // Conecta DeBounce del profe ➔ deco_teclado
     logic       cable_TK_C;           // Conecta tk_columnas ➔ avance_columnas
@@ -22,11 +19,8 @@ module insercion_top (
     logic       cable_d1;             // Conecta fsm_insercion ➔ registro_nums
     logic       cable_d2;             // Conecta fsm_insercion ➔ registro_nums
 
-    // -------------------------------------------------------------
-    // INSTANCIACIÓN DE SUBMÓDULOS: Conectando las piezas
-    // -------------------------------------------------------------
 
-    // 1. Tu Escudo Antimetaestabilidad para las 4 filas de la calle
+    // 1. Antimetaestabilidad para las 4 filas
     sincronizar_filas bloque_sinc (
         .clk_fpga (clk_fpga),
         .reset_B  (reset_B),
@@ -34,32 +28,32 @@ module insercion_top (
         .f_sinc   (cable_f_sinc)
     );
 
-    // 2. USO OBLIGATORIO: Los 4 Filtros de Rebotes de la Cátedra
-    // Instanciamos de forma explícita el código 'DeBounce' del profesor por cada fila.
-    // Usamos el parámetro N=21 para el teclado físico (39ms de retardo mecánico).
+    // 2. USO OBLIGATORIO
+    // código 'DeBounce' del profesor por cada fila.
+    // N=21 para el teclado físico (39ms de retardo mecánico).
     DeBounce #(.N(21)) deb_f0 (.clk(clk_fpga), .n_reset(reset_B), .button_in(cable_f_sinc[0]), .DB_out(cable_f_listas[0]));
     DeBounce #(.N(21)) deb_f1 (.clk(clk_fpga), .n_reset(reset_B), .button_in(cable_f_sinc[1]), .DB_out(cable_f_listas[1]));
     DeBounce #(.N(21)) deb_f2 (.clk(clk_fpga), .n_reset(reset_B), .button_in(cable_f_sinc[2]), .DB_out(cable_f_listas[2]));
     DeBounce #(.N(21)) deb_f3 (.clk(clk_fpga), .n_reset(reset_B), .button_in(cable_f_sinc[3]), .DB_out(cable_f_listas[3]));
 
-    // 3. Tu Corazón de Tiempo Lento para el barrido
+    // 3. Tiempo Lento
     tk_columnas bloque_tick (
         .clk_fpga (clk_fpga),
         .reset_B  (reset_B),
         .TK_C     (cable_TK_C)
     );
 
-    // 4. Tu FSM de Escaneo (El Contador de Anillo)
+    // 4. FSM de Escaneo (El Contador de Anillo)
     avance_columnas bloque_anillo (
         .clk_fpga (clk_fpga),
         .reset_B  (reset_B),
         .TK_C     (cable_TK_C),
-        .f_sinc   (cable_f_sinc),   // NUEVO: filas sincronizadas, para congelar el barrido apenas se presiona una tecla
-        .f_listas (cable_f_listas), // NUEVO: filas filtradas, para no reanudar el barrido hasta que se confirme que se solto
+        .f_sinc   (cable_f_sinc),   //filas sincronizadas, para congelar el barrido apenas se presiona una tecla
+        .f_listas (cable_f_listas), //filas filtradas, para no reanudar el barrido hasta que se confirme que se solto
         .ubic_c   (ubic_c) // Se amarra directo a las patitas físicas de salida de la FPGA
     );
 
-    // 5. Tu Traductor de Coordenadas de Matriz Grayhill
+    // 5. Traductor de Coordenadas de Matriz Grayhill
     deco_teclado bloque_deco (
         .clk_fpga     (clk_fpga),
         .reset_B      (reset_B),
@@ -69,7 +63,7 @@ module insercion_top (
         .s_aviso      (cable_s_aviso)
     );
 
-    // 6. Tu Neurona de Control Moore (La Calculadora)
+    // 6.  Calculadora
     fsm_insercion bloque_fsm (
         .clk_fpga     (clk_fpga),
         .reset_B      (reset_B),
@@ -77,7 +71,7 @@ module insercion_top (
         .b_presionado (cable_b_presionado),
         .d1           (cable_d1),
         .d2           (cable_d2),
-        .R            (R) // Se conecta a la salida maestro para dárselo a Persona A
+        .R            (R) 
     );
 
     // 7. Tus Registros Caja Fuerte de Desplazamiento
@@ -88,12 +82,12 @@ module insercion_top (
         .b_presionado (cable_b_presionado),
         .d1           (cable_d1),
         .d2           (cable_d2),
-        .R            (R),      // NUEVO: la salida R de la FSM entra a registro_nums para limpiar los datos con la tecla B
+        .R            (R),      // la salida R de la FSM entra a registro_nums para limpiar los datos con la tecla B
         .BCD_d1       (BCD_d1), // Se conecta a la salida maestro para dárselo a Persona A
         .BCD_d2       (BCD_d2)  // Se conecta a la salida maestro para dárselo a Persona A
     );
 
-    // NUEVO: los estados de la FSM tambien salen del modulo
+    //los estados de la FSM tambien salen del modulo
     assign d1 = cable_d1;
     assign d2 = cable_d2;
 

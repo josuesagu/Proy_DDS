@@ -1,6 +1,6 @@
 `timescale 1ns/1ps
 
-module tb_tk_columnas(); // CORREGIDO: antes se llamaba tb_tk_columnast
+module tb_tk_columnas(); 
     logic clk;
     logic rst_n;
     logic TK_C;
@@ -13,11 +13,11 @@ module tb_tk_columnas(); // CORREGIDO: antes se llamaba tb_tk_columnast
 
     always #18.5 clk = ~clk;
 
-    // NUEVO: avisa cada vez que TK_C sube, para ver cada cuanto tiempo ocurre
+    // avisa cada vez que TK_C sube, para ver cada cuanto tiempo ocurre
     always @(posedge TK_C) $display("TK_C sube en t = %0t ns (cada ~1 ms)", $time/1000);
 
     initial begin
-        $dumpfile("resultados_sim.vcd");  // NUEVO: para poder ver las formas de onda con make wv
+        $dumpfile("resultados_sim.vcd");  // para poder ver las formas de onda con make wv
         $dumpvars(0, tb_tk_columnas);
 
         clk = 0;
